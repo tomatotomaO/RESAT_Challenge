@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 50px;
+    }
+
+    input {
+      margin: 10px;
+    }
+
+    #timer {
+      font-size: 24px;
+      margin: 20px;
+    }
+
+    #buttons {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <label for="hours"></label>
+  <input type="number" id="hours" min="0" max="24" value="0">
+
+  <label for="minutes">:</label>
+  <input type="number" id="minutes" min="0" max="59" value="0">
+
+  <label for="seconds">:</label>
+  <input type="number" id="seconds" min="0" max="59" value="0">
+
+  <div id="timer">00:00:00</div>
+
+  <div id="buttons">
+    <button onclick="startTimer()">시작</button>
+    <button onclick="stopTimer()">정지</button>
+    <button onclick="resetTimer()">초기화</button>
+  </div>
+
+  <script>
+    let getH = document.getElementById('hours');
+    let getM = document.getElementById('minutes');
+    let getS = document.getElementById('seconds');
+    let totalSeconds;
+    let timer = document.getElementById('timer');
+    let isStop = false;
+    let firstStart = true;
+    let pTimer;
+
+    function startTimer() {
+      if (firstStart == true) {
+        getH.disabled = true;
+        getM.disabled = true;
+        getS.disabled = true;
+
+        totalSeconds = parseInt(getH.value, 10) * 3600 + parseInt(getM.value, 10) * 60 + parseInt(getS.value, 10);
+
+        firstStart = false;
+      }
+      isStop=false;
+      pTimer = setInterval(playingTimer, 1000);
+    }
+
+    function playingTimer() {
+      if (isStop == false && totalSeconds > 0) {
+        drawTimer(totalSeconds);
+        totalSeconds--;
+        
+      } 
+      else if (totalSeconds <= 0) {
+          drawTimer(0);
+          alert('타이머 종료');
+          clearInterval(pTimer);
+          resetTimer();
+        }
+      
+    }
+
+    function stopTimer() {
+      isStop = true;
+      clearInterval(pTimer);
+    }
+
+    function resetTimer() {
+      getH.disabled = false;
+      getM.disabled = false;
+      getS.disabled = false;
+      firstStart = true;
+      isStop = false;
+      clearInterval(pTimer);
+    }
+
+    function drawTimer(totalSeconds) {
+      let hours = Math.floor(totalSeconds / 3600);
+      let minutes = Math.floor((totalSeconds % 3600) / 60);
+      let seconds = totalSeconds % 60;
+
+      timer.textContent = `${addTime(hours)}:${addTime(minutes)}:${addTime(seconds)}`;
+    }
+
+    function addTime(time) {
+      return time < 10 ? `0${time}` : time;
+    }
+  </script>
+</body>
+</html>
