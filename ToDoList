@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="kor">
+  <head>
+    <meta charset="utf-8" />
+    <title>할 일 목록</title>
+    <style>
+      .low { background-color: lightgreen; }
+      .middle { background-color: #ffcc00; }
+      .high { background-color: #ff6666; }
+      .veryHigh { background-color: #ff3333; }
+    </style>
+  </head>
+  <body>
+      <h1 style="text-align: center;">TO-DO LIST</h1>
+      <div id="inputList" style="text-align: center;">
+        <label for="toDo">할 일:</label>
+        <input type="text" id="toDoInput" placeholder="할 일을 입력하세요">
+      
+        <input type="radio" name="level" id="low" value="낮음">
+        <label for="low">낮음</label>
+        <input type="radio" name="level" id="middle" value="보통">
+        <label for="middle">보통</label>
+        <input type="radio" name="level" id="high" value="높음">
+        <label for="high">높음</label>
+        <input type="radio" name="level" id="veryHigh" value="매우 높음">
+        <label for="veryHigh">아주 높음</label>
+        
+        <button onclick="addTask()">추가</button>
+      </div>
+  
+      <div class="doList" style="text-align: center;">
+        <h2>할 일 목록</h2>
+        <label><input type="radio" name="filter" value="all" checked onclick="filterTasks()"> 전체</label>
+        <label><input type="radio" name="filter" value="completed" onclick="filterTasks()"> 완료</label>
+        <label><input type="radio" name="filter" value="uncompleted" onclick="filterTasks()"> 미완료</label>
+
+        <ul id="tasksList"></ul>
+      </div>
+
+    <script>
+      function addTask() {
+        var toDoInput = document.getElementById("toDoInput");
+        var levelInputs = document.getElementsByName("level");
+        var selectedLevel = "";
+        for (var i = 0; i < levelInputs.length; i++) {
+          if (levelInputs[i].checked) {
+            selectedLevel = levelInputs[i].value;
+            break;
+          }
+        }
+
+        if (toDoInput.value.trim() === "" || selectedLevel === "") {
+          alert("할 일과 중요도를 입력하세요.");
+          return;
+        }
+
+        var tasksList = document.getElementById("tasksList");
+        var newTask = document.createElement("li");
+        newTask.className = selectedLevel; 
+        newTask.innerHTML = `<input type="checkbox" onclick="completeTask(this)"> ${toDoInput.value} - ${selectedLevel} <button onclick="editTask(this)">수정</button>`;
+        tasksList.appendChild(newTask);
+
+        toDoInput.value = "";
+        for (var i = 0; i < levelInputs.length; i++) {
+          levelInputs[i].checked = false;
+        }
+      }
+
+      function completeTask(checkbox) {
+        var taskText = checkbox.parentElement.textContent;
+      }
+
+      function editTask(editButton) {
+        var taskText = editButton.parentElement.textContent.split(" - ")[0];
+        var newTaskText = prompt("수정할 내용을 입력하세요:", taskText);
+
+        if (newTaskText !== null && newTaskText.trim() !== "") {
+          editButton.parentElement.firstChild.nodeValue = newTaskText + " - " + editButton.parentElement.className;
+        }
+      }
+
+      function filterTasks() {
+        var filterValue = document.querySelector('input[name="filter"]:checked').value;
+        var tasks = document.getElementById("tasksList").getElementsByTagName("li");
+
+        for (var i = 0; i < tasks.length; i++) {
+          var task = tasks[i];
+          var isCompleted = task.getElementsByTagName("input")[0].checked;
+
+          switch (filterValue) {
+            case "all":
+              task.style.display = "block";
+              break;
+            case "completed":
+              task.style.display = isCompleted ? "block" : "none";
+              break;
+            case "uncompleted":
+              task.style.display = isCompleted ? "none" : "block";
+              break;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
